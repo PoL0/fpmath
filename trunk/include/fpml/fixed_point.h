@@ -2,7 +2,7 @@
 /*                                                                            */
 /*  Copyright (c) 2007-2009: Peter Schregle,                                  */
 /*                           Impuls computergestützte Bildanalyse GmbH.       */
-/*  All rights reserved.                                                      */  
+/*  All rights reserved.                                                      */
 /*                                                                            */
 /*  This file is part of the Fixed Point Math Library.                        */
 /*                                                                            */
@@ -19,7 +19,7 @@
 /*     derived from this software without specific prior written permission.  */
 /*                                                                            */
 /*  THIS SOFTWARE IS PROVIDED BY IMPULS COMPUTERGESTÜTZTE BILDANALYSE GMBH    */
-/*  AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES,           */ 
+/*  AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES,           */
 /*  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY  */
 /*  AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL    */
 /*  IMPULS COMPUTERGESTÜTZTE BILDANALYSE GMBH OR CONTRIBUTORS BE LIABLE FOR   */
