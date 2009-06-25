@@ -34,8 +34,6 @@
 ################################################################################
 
 cmake_minimum_required (VERSION 2.6)
-project (test)
+project (benchmark)
 
-add_subdirectory(unit_test)
-add_subdirectory(benchmark)
-
+add_executable(benchmark benchmark.cpp )

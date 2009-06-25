@@ -296,10 +296,10 @@ public:
 	/// Copy assignment operator.
 	fpml::fixed_point<B, I, F> & operator =(
 		/// The right hand side.
-		fpml::fixed_point<B, I, F> const& r)
+		fpml::fixed_point<B, I, F> const& rhs)
 	{
-		// optimized version of assignment
-		memcpy(this, &r, sizeof(fpml::fixed_point<B, I, F>));
+		fpml::fixed_point<B, I, F> temp(rhs);
+		swap(temp);
 		return *this;
 	}
 
@@ -365,8 +365,14 @@ public:
 
 	/// Unary minus operator.
 	//!
+	//! For signed fixed-point types you can apply the unary minus operator to 
+	//! get the additive inverse. For unsigned fixed-point types, this operation 
+	//! is undefined. Also, shared with the integer base type B, the minimum 
+	//! value representable by the type cannot be inverted, since it would yield 
+	//! a positive value that is out of range and cannot be represented.
+	//!
 	//! /return The negative value.
-	fpml::fixed_point<B, I, F> operator-() const
+	fpml::fixed_point<B, I, F> operator -() const
 	{
 		fpml::fixed_point<B, I, F> result;
 		result.value_ = -value_;
@@ -380,7 +386,7 @@ public:
 	//! operator.
 	//!
 	//! /return A reference to this object.
-	fpml::fixed_point<B, I, F> & operator++()
+	fpml::fixed_point<B, I, F> & operator ++()
 	{
 		value_ += power2<F>::value;
 		return *this;
@@ -388,11 +394,12 @@ public:
 
 	/// Decrement.
 	//!
-	//! Through the use of boost::unit_steppable operator--(int) - postdecrement 
-	//! - is also defined and implemented by calling this operator.
+	//! Through the use of boost::unit_steppable operator --(int) - 
+	//! postdecrement - is also defined and implemented by calling this 
+	//! operator.
 	//!
 	//! /return A reference to this object.
-	fpml::fixed_point<B, I, F> & operator--()
+	fpml::fixed_point<B, I, F> & operator --()
 	{
 		value_ -= power2<F>::value;
 		return *this;
@@ -564,7 +571,7 @@ public:
 	}
 
 	template<
-		/// The numeric type. Must be integer or floating point.
+		/// The numeric type. Must be integer.
 		typename T>
 	/// Convert to an integer type.
 	//!
@@ -806,11 +813,11 @@ public:
 	//! The algorithm uses a MacLaurin series expansion.
 	//!
 	//! First the argument is reduced to be within the range -Pi .. +Pi. Then
-	//! the MacLaurin series is expanded. Since Pi cannot be represented exactly
-	//! the argument reduction is problematic. The more rounds are reduced the
+	//! the MacLaurin series is expanded. The argument reduction is problematic 
+	//! since Pi cannot be represented exactly. The more rounds are reduced the
 	//! less significant is the argument (every reduction round makes a slight
-	//! error), to the extent that the reduced argument and the result are
-	//! meaningless.
+	//! error), to the extent that the reduced argument and consequently the 
+	//! result are meaningless.
 	//!
 	//! The argument reduction uses one division. The series expansion uses 3
 	//! additions and 4 multiplications.
@@ -849,11 +856,11 @@ public:
 	//! The algorithm uses a MacLaurin series expansion.
 	//!
 	//! First the argument is reduced to be within the range -Pi .. +Pi. Then
-	//! the MacLaurin series is expanded. Since Pi cannot be represented exactly
-	//! the argument reduction is problematic. The more rounds are reduced the
+	//! the MacLaurin series is expanded. The argument reduction is problematic 
+	//! since Pi cannot be represented exactly. The more rounds are reduced the
 	//! less significant is the argument (every reduction round makes a slight
-	//! error), to the extent that the reduced argument and the result are
-	//! meaningless.
+	//! error), to the extent that the reduced argument and consequently the 
+	//! result are meaningless.
 	//!
 	//! The argument reduction uses one division. The series expansion uses 3
 	//! additions and 5 multiplications.
