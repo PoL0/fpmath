@@ -1,7 +1,6 @@
 /******************************************************************************/
 /*                                                                            */
 /*  Copyright (c) 2007-2009: Peter Schregle,                                  */
-/*                           Impuls computergestützte Bildanalyse GmbH.       */
 /*  All rights reserved.                                                      */  
 /*                                                                            */
 /*  This file is part of the Fixed Point Math Library.                        */
