@@ -3,9 +3,9 @@
 /*  Copyright (c) 2007-2009: Peter Schregle,                                   */
 /*  All rights reserved.                                                       */
 /*                                                                             */
-/*  This file is part of the Simple Geometry Library.                          */
+/*  This file is part of the Fixed Point Math Library.                         */
 /*                                                                             */
-/*  Redistribution of the Simple Geometry Library and use in source and        */
+/*  Redistribution of the Fixed Point Math Library and use in source and       */
 /*  binary forms, with or without modification, are permitted provided that    */
 /*  the following conditions are met:                                          */
 /*  1. Redistributions of source code must retain the above copyright notice,  */
