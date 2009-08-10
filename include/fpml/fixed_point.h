@@ -140,7 +140,8 @@ class fixed_point
 
 	template<
 		/// 
-		int F>
+		int FF, //CHANGED
+		typename T = void> //CHANGED
 	/// Calculate 2 to the power of F at compile time.
 	//!
 	//! The fixed_point class needs 2 to the power of F in several locations in
@@ -156,11 +157,11 @@ class fixed_point
 	{
 		enum 
 		{ 
-			value = 2 * power2<F-1>::value 
+			value = 2 * power2<FF-1,T>::value 
 		};
 	};
 
-	template <>
+	template <typename T>
 	/// Calculate 2 to the power of 0 at compile time.
 	//!
 	//! The fixed_point class needs 2 to the power of F in several locations in
@@ -172,7 +173,7 @@ class fixed_point
 	//! The value is calculated by recursively instantiating the power2 template
 	//! with successively decrementing F. Finally, 2 to the power of 0 is
 	//! terminating the recursion and set to 1.
-	struct power2<0>
+	struct power2<0,T>
 	{
 		enum 
 		{ 
