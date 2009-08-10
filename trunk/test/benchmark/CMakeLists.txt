@@ -34,4 +34,29 @@
 cmake_minimum_required (VERSION 2.6)
 project (benchmark)
 
+if ( UNIX )
+		
+	set ( Boost_USE_STATIC_LIBS   ON )
+	#set ( Boost_USE_MULTITHREADED ON )
+	find_package( 
+		Boost REQUIRED 
+		COMPONENTS 
+			static_assert
+			operators 
+			concept_check )
+			
+	if ( Boost_FOUND )
+	   
+	   include_directories( ${Boost_INCLUDE_DIRS} )
+	      
+	   link_directories( ${Boost_INCLUDE_DIRS}/build/lib )
+	      
+	else ( Boost_FOUND )
+
+	   message( fatal_error "Boost not found. Cannot continue." )
+		    
+	endif( Boost_FOUND )
+
+endif ( UNIX )
+
 add_executable(benchmark benchmark.cpp )
