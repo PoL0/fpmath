@@ -32,7 +32,7 @@
 /*******************************************************************************/
 
 
-#include "..\..\include\fpml\fixed_point.h"
+#include "../../include/fpml/fixed_point.h"
 #include <iostream>
 #include <intrin.h>
 
