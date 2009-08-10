@@ -3,9 +3,9 @@
 /*  Copyright (c) 2007-2009: Peter Schregle,                                   */
 /*  All rights reserved.                                                       */
 /*                                                                             */
-/*  This file is part of the Simple Geometry Library.                          */
+/*  This file is part of the Fixed Point Math Library.                        */
 /*                                                                             */
-/*  Redistribution of the Simple Geometry Library and use in source and        */
+/*  Redistribution of the Fixed Point Math Library and use in source and      */
 /*  binary forms, with or without modification, are permitted provided that    */
 /*  the following conditions are met:                                          */
 /*  1. Redistributions of source code must retain the above copyright notice,  */
@@ -39,6 +39,7 @@
 #ifndef __fixed_point_h__
 #define __fixed_point_h__
 
+#include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/operators.hpp>
 #include <boost/concept_check.hpp>
@@ -48,7 +49,7 @@
 	#define __FPML_DEFINED_USE_MATH_DEFINES__
 #endif
 #include <math.h>
-
+#include <errno.h>
 
 namespace fpml {
 
@@ -436,7 +437,7 @@ public:
 		{ };
 
 		template<
-			typename T>
+			typename T, typename U=void>
 		/// Multiplication and division of fixed_point numbers need type 
 		/// promotion.
 		//!
@@ -461,49 +462,49 @@ public:
 		//!
 		//! Therefore, the Fixed Point Math Library defines its own promotions 
 		//! here in a set of private classes.
-		struct promote_type
+		struct promote_type;/*
 		{
 			typedef Error_promote_type_not_specialized_for_this_type type;
-		};
+		};*/
 
-		template<>
+		template<typename U>
 		/// Promote signed char to signed short.
-		struct promote_type<signed char>
+		struct promote_type<signed char,U>
 		{
 			typedef signed short type;
 		};
 
-		template<>
+		template<typename U>
 		/// Promote unsigned char to unsigned short.
-		struct promote_type<unsigned char>
+		struct promote_type<unsigned char,U>
 		{
 			typedef unsigned short type;
 		};
 
-		template<>
+		template<typename U>
 		/// Promote signed short to signed int.
-		struct promote_type<signed short>
+		struct promote_type<signed short,U>
 		{
 			typedef signed int type;
 		};
 
-		template<>
+		template<typename U>
 		/// Promote unsigned short to unsigned int.
-		struct promote_type<unsigned short>
+		struct promote_type<unsigned short,U> 
 		{
 			typedef unsigned int type;
 		};
 
-		template<>
+		template<typename U>
 		/// Promote signed int to signed long long.
-		struct promote_type<signed int>
+		struct promote_type<signed int,U> 
 		{
 			typedef signed long long type;
 		};
 
-		template<>
+		template<typename U>
 		/// Promote unsigned int to unsigned long long.
-		struct promote_type<unsigned int>
+		struct promote_type<unsigned int,U> 
 		{
 			typedef unsigned long long type;
 		};
@@ -520,7 +521,8 @@ public:
 		/// Factor for mutliplication.
 		fpml::fixed_point<B, I, F> const& factor)
 	{
-		value_ = (static_cast<fpml::fixed_point<B, I, F>::promote_type<B>::type>
+		
+		value_ = (static_cast< typename fpml::fixed_point<B, I, F>::template promote_type<B>::type>
 			(value_) * factor.value_) >> F;
 		return *this;
 	}
@@ -535,7 +537,7 @@ public:
 		/// Divisor for division.
 		fpml::fixed_point<B, I, F> const& divisor)
 	{
-		value_ = (static_cast<fpml::fixed_point<B, I, F>::promote_type<B>::type>
+		value_ = (static_cast<typename fpml::fixed_point<B, I, F>::template promote_type<B>::type>
 			(value_) << F) / divisor.value_;
 		return *this;
 	}
@@ -918,14 +920,14 @@ public:
 			return 0;
 		}
 
-		fpml::fixed_point<B, I, F>::promote_type<B>::type op = 
-			static_cast<fpml::fixed_point<B, I, F>::promote_type<B>::type>(
+		typename fpml::fixed_point<B, I, F>::template promote_type<B>::type op = 
+			static_cast<typename fpml::fixed_point<B, I, F>::template promote_type<B>::type>(
 				x.value_) << (I - 1);
-		fpml::fixed_point<B, I, F>::promote_type<B>::type res = 0;
-		fpml::fixed_point<B, I, F>::promote_type<B>::type one = 
-			(fpml::fixed_point<B, I, F>::promote_type<B>::type)1 << 
-				(std::numeric_limits<fpml::fixed_point<B, I, F>::promote_type<B>
-					::type>::digits - 1);
+		typename fpml::fixed_point<B, I, F>::template promote_type<B>::type res = 0;
+		typename fpml::fixed_point<B, I, F>::template promote_type<B>::type one = 
+			(typename fpml::fixed_point<B, I, F>::template promote_type<B>::type)1 << 
+				(std::numeric_limits<typename fpml::fixed_point<B, I, F>::template promote_type<B>
+					::type>::digits - 1); 
 
 		while (one > op)
 			one >>= 2;
@@ -1119,7 +1121,7 @@ public:
 	//! which is the case for all fixed_point types with a signed base type.
 	//! Otherwise it stores false.
 	static const bool is_signed = 
-		std::numeric_limits<fp_type::base_type>::is_signed;
+		std::numeric_limits<typename fp_type::base_type>::is_signed;
 
 	/// Tests if a type has an explicit specialization defined in the template 
 	/// class numeric_limits.
@@ -1180,7 +1182,7 @@ public:
 	static fp_type (min)()
 	{
 		fp_type minimum;
-		minimum.value_ = (std::numeric_limits<fp_type::base_type>::min)();
+		minimum.value_ = (std::numeric_limits<typename fp_type::base_type>::min)();
 		return minimum;
 	}
 
@@ -1190,7 +1192,7 @@ public:
 	static fp_type (max)()
 	{
 		fp_type maximum;
-		maximum.value_ = (std::numeric_limits<fp_type::base_type>::max)();
+		maximum.value_ = (std::numeric_limits<typename fp_type::base_type>::max)();
 		return maximum;
 	}
 
