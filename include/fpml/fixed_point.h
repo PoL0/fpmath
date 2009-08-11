@@ -35,6 +35,8 @@
 /// \file
 /// This file implements a fixed point class, which is hoped to be faster than
 /// floating point on some architectures.
+//!
+//! Paul Dixon helped in making the class compatible with gcc.
 
 #ifndef __fixed_point_h__
 #define __fixed_point_h__
@@ -139,41 +141,44 @@ class fixed_point
 	friend class std::numeric_limits<fpml::fixed_point<B, I, F> >;
 
 	template<
-		/// 
-		int FF, //CHANGED
-		typename T = void> //CHANGED
+		/// The power.
+		int P,
+		/// Make gcc happy.
+		typename T = void>
 	/// Calculate 2 to the power of F at compile time.
 	//!
-	//! The fixed_point class needs 2 to the power of F in several locations in
+	//! The fixed_point class needs 2 to the power of P in several locations in
 	//! the code. However, the value depends on compile time constants only and
 	//! can therefore be calculated at compile time using this template 
-	//! trickery. There is no need to call the function pow(2., F) at runtime to
+	//! trickery. There is no need to call the function pow(2., P) at runtime to
 	//! calculate this value.
 	//!
 	//! The value is calculated by recursively instantiating the power2 template
-	//! with successively decrementing F. Finally, 2 to the power of 0 is
+	//! with successively decrementing P. Finally, 2 to the power of 0 is
 	//! terminating the recursion and set to 1.
 	struct power2
 	{
 		enum 
 		{ 
-			value = 2 * power2<FF-1,T>::value 
+			value = 2 * power2<P-1,T>::value 
 		};
 	};
 
-	template <typename T>
+	template <
+		/// Make gcc happy.
+		typename P>
 	/// Calculate 2 to the power of 0 at compile time.
 	//!
-	//! The fixed_point class needs 2 to the power of F in several locations in
+	//! The fixed_point class needs 2 to the power of P in several locations in
 	//! the code. However, the value depends on compile time constants only and
 	//! can therefore be calculated at compile time using this template 
-	//! trickery. There is no need to call the function pow(2., F) at runtime to
+	//! trickery. There is no need to call the function pow(2., P) at runtime to
 	//! calculate this value.
 	//!
 	//! The value is calculated by recursively instantiating the power2 template
-	//! with successively decrementing F. Finally, 2 to the power of 0 is
+	//! with successively decrementing P. Finally, 2 to the power of 0 is
 	//! terminating the recursion and set to 1.
-	struct power2<0,T>
+	struct power2<0, P>
 	{
 		enum 
 		{ 
@@ -358,7 +363,7 @@ public:
 	/// Negation operator.
 	//!
 	//! /return true if equal to zero, false otherwise.
-	bool operator!() const
+	bool operator !() const
 	{
 		return value_ == 0; 
 	}
@@ -438,7 +443,10 @@ public:
 		{ };
 
 		template<
-			typename T, typename U=void>
+			/// Pick up unspecialized types.
+			typename T, 
+			/// Make gcc happy.
+			typename U=void>
 		/// Multiplication and division of fixed_point numbers need type 
 		/// promotion.
 		//!
@@ -463,49 +471,63 @@ public:
 		//!
 		//! Therefore, the Fixed Point Math Library defines its own promotions 
 		//! here in a set of private classes.
-		struct promote_type;/*
+		struct promote_type
 		{
+			#ifdef _MSC_VER
 			typedef Error_promote_type_not_specialized_for_this_type type;
-		};*/
+			#endif // #ifdef _MSC_VER
+		};
 
-		template<typename U>
+		template<
+			/// Make gcc happy.
+			typename U>
 		/// Promote signed char to signed short.
-		struct promote_type<signed char,U>
+		struct promote_type<signed char, U>
 		{
 			typedef signed short type;
 		};
 
-		template<typename U>
+		template<
+			/// Make gcc happy.
+			typename U>
 		/// Promote unsigned char to unsigned short.
-		struct promote_type<unsigned char,U>
+		struct promote_type<unsigned char, U>
 		{
 			typedef unsigned short type;
 		};
 
-		template<typename U>
+		template<
+			/// Make gcc happy.
+			typename U>
 		/// Promote signed short to signed int.
-		struct promote_type<signed short,U>
+		struct promote_type<signed short, U>
 		{
 			typedef signed int type;
 		};
 
-		template<typename U>
+		template<
+			/// Make gcc happy.
+			typename U>
 		/// Promote unsigned short to unsigned int.
-		struct promote_type<unsigned short,U> 
+		struct promote_type<unsigned short, U> 
 		{
 			typedef unsigned int type;
 		};
 
-		template<typename U>
+		template<
+			/// Make gcc happy.
+			typename U>
 		/// Promote signed int to signed long long.
-		struct promote_type<signed int,U> 
+		struct promote_type<signed int, U> 
 		{
 			typedef signed long long type;
 		};
 
-		template<typename U>
+		template<
+			/// Make gcc happy.
+			typename U>
 		/// Promote unsigned int to unsigned long long.
-		struct promote_type<unsigned int,U> 
+		struct promote_type<unsigned int, U> 
 		{
 			typedef unsigned long long type;
 		};
@@ -523,7 +545,8 @@ public:
 		fpml::fixed_point<B, I, F> const& factor)
 	{
 		
-		value_ = (static_cast< typename fpml::fixed_point<B, I, F>::template promote_type<B>::type>
+		value_ = (static_cast< typename fpml::fixed_point<B, I, F>::template 
+				promote_type<B>::type>
 			(value_) * factor.value_) >> F;
 		return *this;
 	}
@@ -538,7 +561,8 @@ public:
 		/// Divisor for division.
 		fpml::fixed_point<B, I, F> const& divisor)
 	{
-		value_ = (static_cast<typename fpml::fixed_point<B, I, F>::template promote_type<B>::type>
+		value_ = (static_cast<typename fpml::fixed_point<B, I, F>::template 
+				promote_type<B>::type>
 			(value_) << F) / divisor.value_;
 		return *this;
 	}
@@ -571,17 +595,92 @@ public:
 		return *this;
 	}
 
-	template<
-		/// The numeric type. Must be integer.
-		typename T>
-	/// Convert to an integer type.
+	/// Convert to char.
 	//!
-	//! /return The value converted to the integer type.
-	operator T() const
+	//! /return The value converted to char.
+	operator char() const
 	{
-		BOOST_CONCEPT_ASSERT((boost::Integer<T>));
+		return (char)(value_ >> F);	
+	}
 
-		return value_ >> F;	
+	/// Convert to signed char.
+	//!
+	//! /return The value converted to signed char.
+	operator signed char() const
+	{
+		return (signed char)(value_ >> F);	
+	}
+
+	/// Convert to unsigned char.
+	//!
+	//! /return The value converted to unsigned char.
+	operator unsigned char() const
+	{
+		return (unsigned char)(value_ >> F);	
+	}
+
+	/// Convert to short.
+	//!
+	//! /return The value converted to short.
+	operator short() const
+	{
+		return (short)(value_ >> F);	
+	}
+
+	/// Convert to unsigned short.
+	//!
+	//! /return The value converted to unsigned short.
+	operator unsigned short() const
+	{
+		return (unsigned short)(value_ >> F);	
+	}
+
+	/// Convert to int.
+	//!
+	//! /return The value converted to int.
+	operator int() const
+	{
+		return (int)(value_ >> F);	
+	}
+
+	/// Convert to unsigned int.
+	//!
+	//! /return The value converted to unsigned int.
+	operator unsigned int() const
+	{
+		return (unsigned int)(value_ >> F);	
+	}
+
+	/// Convert to long.
+	//!
+	//! /return The value converted to long.
+	operator long() const
+	{
+		return (long)(value_ >> F);	
+	}
+
+	/// Convert to unsigned long.
+	//!
+	//! /return The value converted to unsigned long.
+	operator unsigned long() const
+	{
+		return (unsigned long)(value_ >> F);	
+	}
+
+	/// Convert to long long.
+	//!
+	//! /return The value converted to long long.
+	operator long long() const
+	{
+		return (long long)(value_ >> F);	
+	}
+
+	/// Convert to unsigned long long.
+	//!
+	//! /return The value converted to unsigned long long.
+	operator unsigned long long() const
+	{
+		return (unsigned long long)(value_ >> F);	
 	}
 
 	/// Convert to a bool.
