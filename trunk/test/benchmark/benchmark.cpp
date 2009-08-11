@@ -33,8 +33,8 @@
 
 
 #include "../../include/fpml/fixed_point.h"
+#include "intrin.h"
 #include <iostream>
-#include <intrin.h>
 
 /******************************************************************************/
 /*                                                                            */
