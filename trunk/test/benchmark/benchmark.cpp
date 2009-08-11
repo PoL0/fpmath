@@ -92,7 +92,7 @@ int main()
 	float af = 1.0;
 	float bf = 2.0;
 	float cf;
-	unsigned __int64 start = cpu_clocks_32();
+	unsigned int start = cpu_clocks_32();
 	for (int i=0; i<loops; ++i)
 	{
 		g = 0;
