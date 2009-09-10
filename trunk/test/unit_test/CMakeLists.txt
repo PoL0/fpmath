@@ -34,7 +34,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (unit_test)
 
-if ( UNIX )
+#if ( UNIX )
 		
 	set ( Boost_USE_STATIC_LIBS   ON )
 	#set ( Boost_USE_MULTITHREADED ON )
@@ -58,7 +58,7 @@ if ( UNIX )
 		    
 	endif( Boost_FOUND )
 
-endif ( UNIX )
+#endif ( UNIX )
 
 SET(source_files
 	fixed_point.cpp 
