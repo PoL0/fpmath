@@ -136,6 +136,11 @@ class fixed_point
 	// the bit count provided by the base type. The sign bit does not count.
 	BOOST_STATIC_ASSERT(I + F == std::numeric_limits<B>::digits);
 
+	/// Grant the fixed_point template access to private members. Types with
+	/// different template parameters are different types and without this
+	/// declaration they do not have access to private members.
+	friend class fpml::fixed_point;
+
 	/// Grant the numeric_limits specialization for this fixed_point class 
 	/// access to private members.
 	friend class std::numeric_limits<fpml::fixed_point<B, I, F> >;
@@ -158,10 +163,7 @@ class fixed_point
 	//! terminating the recursion and set to 1.
 	struct power2
 	{
-		enum 
-		{ 
-			value = 2 * power2<P-1,T>::value 
-		};
+		static const long long value = 2 * power2<P-1,T>::value;
 	};
 
 	template <
@@ -180,10 +182,7 @@ class fixed_point
 	//! terminating the recursion and set to 1.
 	struct power2<0, P>
 	{
-		enum 
-		{ 
-			value = 1 
-		};
+		static const long long value = 1;
 	};
 
 	/// Initializing constructor.
@@ -294,7 +293,7 @@ public:
 	{ 
 		if (I-I2 > 0)
 			value_ >>= I-I2;
-		if (I2<I > 0)
+		if (I2-I > 0)
 			value_ <<= I2-I;
 	}
 
